@@ -1,13 +1,30 @@
+const recorder = new Tone.Recorder();
+
+var octave = 4;
+document.getElementById("octaveDisplay").innerHTML = octave + " (Middle C)";
+
+function changeOctave(new_octave) {
+  octave = new_octave;
+  if(octave == 4) {
+    document.getElementById("octaveDisplay").innerHTML = octave + " (Middle C)";
+  } else {
+    document.getElementById("octaveDisplay").innerHTML = octave;
+  }
+}
+
 function playNote(note_description) {
   var key = note_description.toUpperCase();
   var note = key.replace("S", "#");
   if(note_description.includes("8")) {
-    note = note.replace("8", "5")
+    note = note.replace("8", (octave + 1).toString())
   } else {
-    note = note.concat("4")
+    note = note.concat(octave.toString())
   }
   const synth = new Tone.Synth().toDestination();
-  console.log(note);
+  if(recorder.state == "started") {
+    const recsynth = new Tone.Synth().connect(recorder);
+    recsynth.triggerAttackRelease(note, '8n')
+  }
   synth.triggerAttackRelease(note, '8n')
 }
 
@@ -21,9 +38,10 @@ for(var i = 0; i < buttons.length; i++) {
   buttons[i].addEventListener("click", pianoKeyButtonHandler);
 };
 
-document.addEventListener('keypress', (event) => {
+document.addEventListener('keypress', async (event) => {
   var name = event.key;
   var code = event.code;
+  const anchor = document.getElementById("recording-link");
   // Alert the key name and key code on keydown
   switch(name) {
     case 'a': 
@@ -64,6 +82,27 @@ document.addEventListener('keypress', (event) => {
       break;
     case 'k': 
       playNote(buttons[12].classList.item(1));
+      break;
+    case 'z':
+      changeOctave(octave - 1);
+      break;
+    case 'x':
+      changeOctave(octave + 1);
+      break;
+    case 'r':
+      if(recorder.state == "started") {
+        const recording = await recorder.stop();
+        console.log(recording)
+        const url = URL.createObjectURL(recording);
+        anchor.download = "recording.webm";
+        anchor.href = url;
+        anchor.innerHTML = "Download recording";
+        console.log("Stopped recording");
+      } else {
+        recorder.start();
+        anchor.innerHTML = "Recording..."
+        console.log("Started recording");
+      }
       break;
     default:
       // alert(`Key pressed ${name} \r\n Key code value: ${code}`);

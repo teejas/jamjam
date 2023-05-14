@@ -67,6 +67,15 @@ ul .white:active {
   margin:0 0 0 -1em
 }
 
+.info {
+  margin:5em auto;
+  position:relative;
+  color: white;
+  font-weight:bold;
+  text-align:center;
+  font-size: 2em;
+}
+
 ul li:first-child {
   border-radius:5px 0 5px 5px
 }
