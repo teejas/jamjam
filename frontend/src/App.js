@@ -1,7 +1,9 @@
 import { playNote as playNoteWDesc, keyPressHandler, loadSamples } from "./utils.js";
 import { Piano, KeyboardShortcuts, MidiNumbers } from 'react-piano';
+import Box from '@mui/material/Box';
 import 'react-piano/dist/styles.css';
 import './App.css';
+import Samples from './Sample.js';
 
 const NOTES = ['c', 'cs', 'd', 'ds', 'e', 'f', 'fs', 'g', 'gs', 'a', 'as', 'b']
 
@@ -14,10 +16,9 @@ function App() {
     keyboardConfig: KeyboardShortcuts.HOME_ROW,
   });
   window.addEventListener('keypress', keyPressHandler, false);
-  loadSamples();
 
   return (
-    <div className="App">
+    <Box sx={{ padding: '2em', width: '75%', textAlign: 'center', border: 'dotted' }}>
       <Piano
         noteRange={{ first: firstNote, last: lastNote }}
         playNote={(midiNumber) => {
@@ -34,10 +35,10 @@ function App() {
         keyboardShortcuts={keyboardShortcuts}
       />
       <div className="info">
-          <a id="recording-link"></a>
-          <table title="samples table" className="samples" id="samples-table"></table>
+        <a id="recording-link"></a>
+        <Samples />
       </div>
-    </div>
+    </Box>
   );
 }
 
