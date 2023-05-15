@@ -16,7 +16,6 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', async (req, res) => {
   // const samples = await fs.promises.readdir(process.cwd() + '/../audiogen/samples');
-  await redisClient.connect();
   res.sendFile('index.html', { root: __dirname });
 })
 
@@ -30,14 +29,16 @@ app.get('/getsample/:sample', async (req, res) => {
   res.send(sample);
 })
 
-app.post('/generateaudio', jsonParser, (req, res) => {
+app.post('/generateaudio', jsonParser, async (req, res) => {
+  await redisClient.connect();
   const sample = req.body.sample;
   if(!sample) {
     res.status(400).send('No sample provided');
   } else {
-    redisClient.set(sample, "audiogen");
+    await redisClient.set(sample, "audiogen");
     res.status(200).send('Enqueued task to generate audio')
   }
+  await redisClient.disconnect();
 })
 
 app.post('/saverecording', webmParser, async (req, res) => {
