@@ -3,7 +3,7 @@ const redis = require('redis');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 var jsonParser = bodyParser.json()
-var webmParser = bodyParser.raw({type: "audio/webm"})
+var webmParser = bodyParser.raw({type: "audio/webm", limit: '50mb'})
 
 const redisClient = redis.createClient();
 
