@@ -1,6 +1,6 @@
-import { OCTAVE, pianoKeyButtonHandler, keyPressHandler } from "./utils.js";
+import { currentOctave, pianoKeyButtonHandler, keyPressHandler, loadSamples } from "./utils.js";
 
-document.getElementById("octaveDisplay").innerHTML = OCTAVE + " (Middle C)";
+document.getElementById("octaveDisplay").innerHTML = currentOctave + " (Middle C)";
 
 var buttons = document.getElementsByClassName("play-button");
 for(var i = 0; i < buttons.length; i++) {
@@ -9,3 +9,5 @@ for(var i = 0; i < buttons.length; i++) {
 };
 
 document.addEventListener('keypress', keyPressHandler, false);
+
+loadSamples();
