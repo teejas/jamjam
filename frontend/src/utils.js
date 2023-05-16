@@ -29,6 +29,11 @@ function pianoKeyButtonHandler(event) {
   playNote(event.currentTarget.note_desc);
 }
 
+function getSong(sample) {
+  const url = baseUrl + "getsample/" + sample;
+  return url
+}
+
 function playSong(sample) {
   const url = baseUrl + "getsample/" + sample;
   var sound = new Howl({
@@ -80,10 +85,12 @@ async function recorderButtonHandler(event) {
   if(recorder.state == "started") {
     const recording = await recorder.stop();
     saveRecording(recording);
-    const url = URL.createObjectURL(recording);
-    anchor.download = "recording.webm";
-    anchor.href = url;
-    anchor.innerHTML = "Download recording";
+    // const url = URL.createObjectURL(recording);
+    // var saveButton = document.createElement("button");
+    // saveButton.addEventListener("click", saveRecording(recording));
+    // anchor.download = "recording.webm";
+    // anchor.href = url;
+    // anchor.innerHTML = "Download recording";
     console.log("Stopped recording");
   } else {
     recorder.start();
@@ -109,4 +116,14 @@ async function keyPressHandler(event) {
   }
 }
 
-export { playNote, keyPressHandler, loadSamples, playSong, generateAudio }
+function uploadSample(file) {
+  console.log(file);
+  fetch(baseUrl + "uploadsample", {
+    method: 'POST',
+    body: file,
+  }).catch(function (error) {
+    console.warn('Something went wrong.', error);
+  });
+}
+
+export { playNote, keyPressHandler, loadSamples, playSong, generateAudio, getSong, uploadSample }

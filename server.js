@@ -6,6 +6,7 @@ const cors = require('cors');
 
 var jsonParser = bodyParser.json()
 var webmParser = bodyParser.raw({type: "audio/webm", limit: '50mb'})
+var rawAudioParser = bodyParser.raw({type: "audio/*", limit: '50mb'})
 
 const redisClient = redis.createClient();
 
@@ -50,9 +51,26 @@ app.post('/saverecording', webmParser, async (req, res) => {
   const recording = req.body;
   // console.log(recording);
   filePath = process.cwd() + '/../audiogen/samples/recording.webm';
+  var i = 1;
+  while(fs.existsSync(filePath)) {
+    filePath = process.cwd() + '/../audiogen/samples/recording' + i.toString() + '.webm';
+    i++;
+  }
   await fs.promises.writeFile(filePath, recording);
   res.status(200).send('Recording saved')
 });
+
+app.post('/uploadsample', rawAudioParser, async (req, res) => {
+  const file = req.body;
+  filePath = process.cwd() + '/../audiogen/samples/sample.webm';
+  var i = 1;
+  while(fs.existsSync(filePath)) {
+    filePath = process.cwd() + '/../audiogen/samples/sample' + i.toString() + '.webm';
+    i++;
+  }
+  await fs.promises.writeFile(filePath, file);
+  res.status(200).send('Uploaded sample')
+})
 
 app.listen(port, () => {
   console.log(`jamjam listening on port ${port}`)

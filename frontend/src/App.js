@@ -18,11 +18,10 @@ function App() {
   window.addEventListener('keypress', keyPressHandler, false);
 
   return (
-    <Box sx={{ padding: '2em', width: '75%', textAlign: 'center', border: 'dotted' }}>
+    <Box sx={{ padding: '2em', width: '60%', textAlign: 'center', border: 'dotted' }}>
       <Piano
         noteRange={{ first: firstNote, last: lastNote }}
         playNote={(midiNumber) => {
-          // Play a given note - see notes below
           var octave = Math.floor(midiNumber / NOTES.length)
           var note = NOTES[midiNumber % NOTES.length]
           var noteDesc = note.concat(octave.toString())
