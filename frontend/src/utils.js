@@ -2,7 +2,6 @@ import * as Tone from 'tone';
 import {Howl} from 'howler';
 
 const baseUrl = "http://localhost:3001/";
-const recorder = new Tone.Recorder();
 var currentOctave = 4; // global variable
 
 function changeOctave(octave) {
@@ -14,7 +13,7 @@ function changeOctave(octave) {
   }
 }
 
-function playNote(note_description) {
+function playNote(note_description, recorder) {
   var key = note_description.toUpperCase();
   var note = key.replace("S", "#");
   const synth = new Tone.Synth().toDestination();
@@ -34,13 +33,17 @@ function getSong(sample) {
   return url
 }
 
-function playSong(sample) {
-  const url = baseUrl + "getsample/" + sample;
+function playSongFromURL(url) {
   var sound = new Howl({
     src: [url],
     format: ["webm", "mp3", "wav"]
   });
   sound.play();
+}
+
+function playSong(sample) {
+  const url = baseUrl + "getsample/" + sample;
+  playSongFromURL(url)
 }
 
 function generateAudio(sample) {
@@ -68,8 +71,8 @@ async function loadSamples() {
   return ret;
 }
 
-function saveRecording(recording) {
-  fetch(baseUrl + "saverecording", {
+async function saveRecording(recording) {
+  await fetch(baseUrl + "saverecording", {
     method: 'POST',
     body: recording, // The data
     headers: {
@@ -78,42 +81,6 @@ function saveRecording(recording) {
   }).catch(function (error) {
     console.warn('Something went wrong.', error);
   });
-}
-
-async function recorderButtonHandler(event) {
-  const anchor = document.getElementById("recording-link");
-  if(recorder.state == "started") {
-    const recording = await recorder.stop();
-    saveRecording(recording);
-    // const url = URL.createObjectURL(recording);
-    // var saveButton = document.createElement("button");
-    // saveButton.addEventListener("click", saveRecording(recording));
-    // anchor.download = "recording.webm";
-    // anchor.href = url;
-    // anchor.innerHTML = "Download recording";
-    console.log("Stopped recording");
-  } else {
-    recorder.start();
-    anchor.innerHTML = "Recording..."
-    console.log("Started recording");
-  }
-}
-
-async function keyPressHandler(event) {
-  var name = event.key;
-  switch(name) {
-    // case 'z':
-    //   changeOctave(currentOctave - 1);
-    //   break;
-    // case 'x':
-    //   changeOctave(currentOctave + 1);
-    //   break;
-    case 'r':
-      await recorderButtonHandler();
-      break;
-    default:
-      break;
-  }
 }
 
 function uploadSample(file) {
@@ -126,4 +93,4 @@ function uploadSample(file) {
   });
 }
 
-export { playNote, keyPressHandler, loadSamples, playSong, generateAudio, getSong, uploadSample }
+export { playNote, loadSamples, playSong, generateAudio, getSong, uploadSample, saveRecording, playSongFromURL }

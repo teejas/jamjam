@@ -1,4 +1,5 @@
-import { playNote as playNoteWDesc, keyPressHandler, loadSamples } from "./utils.js";
+import * as Tone from 'tone';
+import { playNote as playNoteWDesc } from "./utils.js";
 import { Piano, KeyboardShortcuts, MidiNumbers } from 'react-piano';
 import Box from '@mui/material/Box';
 import 'react-piano/dist/styles.css';
@@ -15,7 +16,7 @@ function App() {
     lastNote: lastNote,
     keyboardConfig: KeyboardShortcuts.HOME_ROW,
   });
-  window.addEventListener('keypress', keyPressHandler, false);
+  const recorder = new Tone.Recorder();
 
   return (
     <Box sx={{ padding: '2em', width: '60%', textAlign: 'center', border: 'dotted' }}>
@@ -25,7 +26,7 @@ function App() {
           var octave = Math.floor(midiNumber / NOTES.length)
           var note = NOTES[midiNumber % NOTES.length]
           var noteDesc = note.concat(octave.toString())
-          playNoteWDesc(noteDesc)
+          playNoteWDesc(noteDesc, recorder)
         }}
         stopNote={(midiNumber) => {
           // Stop playing a given note - see notes below
@@ -34,8 +35,7 @@ function App() {
         keyboardShortcuts={keyboardShortcuts}
       />
       <div className="info">
-        <a id="recording-link"></a>
-        <Samples />
+        <Samples recorder={recorder}/>
       </div>
     </Box>
   );

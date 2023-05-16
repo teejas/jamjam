@@ -62,14 +62,19 @@ app.post('/saverecording', webmParser, async (req, res) => {
 
 app.post('/uploadsample', rawAudioParser, async (req, res) => {
   const file = req.body;
-  filePath = process.cwd() + '/../audiogen/samples/sample.webm';
-  var i = 1;
-  while(fs.existsSync(filePath)) {
-    filePath = process.cwd() + '/../audiogen/samples/sample' + i.toString() + '.webm';
-    i++;
+  console.log(file);
+  if(file.length > 0) {
+    filePath = process.cwd() + '/../audiogen/samples/sample.webm';
+    var i = 1;
+    while(fs.existsSync(filePath)) {
+      filePath = process.cwd() + '/../audiogen/samples/sample' + i.toString() + '.webm';
+      i++;
+    }
+    await fs.promises.writeFile(filePath, file);
+    res.status(200).send('Uploaded sample')
+  } else {
+    console.log('No file provided');
   }
-  await fs.promises.writeFile(filePath, file);
-  res.status(200).send('Uploaded sample')
 })
 
 app.listen(port, () => {
